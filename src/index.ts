@@ -45,10 +45,33 @@ export default {
 				return new Response(JSON.stringify({ error: "No file uploaded"}));
 			}
 
-			const r2Object = await env.MEANDERING.put(file.name, await file.arrayBuffer(), {
-				httpMetadata: file.type ? { contentType: file.type } : undefined,
-			  })
-			
+
+			//
+			// Upload the sample to R2 to have for future reference.
+			// 
+
+			try {
+				const r2Object = await env.MEANDERING.put(file.name, await file.arrayBuffer(), {
+				  httpMetadata: file.type ? { contentType: file.type } : undefined,
+				});
+			  
+				if (r2Object) {
+				  console.log("File uploaded successfully to R2");
+				} else {
+				  console.error("Upload to R2 failed: Unexpected null response");
+				}
+			  } catch (error: unknown) {
+				if (error instanceof Error) {
+				  console.error("Error uploading to R2:", error.message);
+				} else {
+				  console.error("An unknown error occurred while uploading to R2");
+				}
+			  }
+
+			// 
+			// Use Cartesia's API to clone the voice. Returns an embedding. 
+			//
+
 			const url = "https://api.cartesia.ai/voices/clone/clip";
 	
 			const options: RequestInit = {
