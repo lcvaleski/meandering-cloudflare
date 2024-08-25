@@ -1,4 +1,4 @@
 export interface Env {
-	MEANDERING: R2Bucket;
+	USER_UPLOADED_CLIPS: R2Bucket;
 	CARTESIA_API_KEY: String;
 }
