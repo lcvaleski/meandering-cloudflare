@@ -13,7 +13,6 @@ export async function handleCreateVoice(request: Request, env: Env): Promise<Res
     }
 
     await uploadFileToR2(file, env.MEANDERING);
-
     const url = "https://api.cartesia.ai/voices/clone/clip";
     const options: RequestInit = {
       method: 'POST',
