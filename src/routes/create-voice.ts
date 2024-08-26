@@ -18,15 +18,13 @@ export async function handleCreateVoice(request: Request, env: Env): Promise<Res
       method: 'POST',
       headers: {
         'Cartesia-Version': '2024-06-10',
-        'X-API-Key': env.CARTESIA_API_KEY.toString(),
+        'X-API-Key': env.CARTESIA_API_KEY,
       },
       body: form
     };
 
-    const response = await fetch(url, options);
-    const data = await response.text();
+    return fetch(url, options);
 
-    return new Response(JSON.stringify(data), { status: response.status });
   } catch (err) {
     const error = err as Error;
     const errorDetails = {
