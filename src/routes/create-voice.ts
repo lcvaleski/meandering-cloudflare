@@ -12,18 +12,23 @@ export async function handleCreateVoice(request: Request, env: Env): Promise<Res
       return new Response(JSON.stringify({ error: "No file uploaded" }));
     }
 
-    await uploadFileToR2(file, env.USER_UPLOADED_CLIPS);
+    const r2Object = await env.USER_UPLOADED_CLIPS.put('audio.wav', file, {
+      httpMetadata: { contentType: 'audio/wav' },
+    });    
+
     const url = "https://api.cartesia.ai/voices/clone/clip";
     const options: RequestInit = {
       method: 'POST',
       headers: {
         'Cartesia-Version': '2024-06-10',
-        'X-API-Key': env.CARTESIA_API_KEY,
+        'X-API-Key': env.CARTESIA_API_KEY.toString(),
       },
       body: form
     };
-
-    return fetch(url, options);
+    
+    let response = fetch(url, options);
+    console.log(response);
+    return response;
 
   } catch (err) {
     const error = err as Error;

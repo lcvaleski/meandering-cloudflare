@@ -1,7 +1,10 @@
 # Setup instructions
 
-* `npm install -g @cloudflare/wrangler`
-* `wrangler login`
+1. `npm install -g @cloudflare/wrangler`
+2. `wrangler login`
+3. Create a `.dev.vars` file and add:
+    `CARTESIA_API_KEY="<ask logan for key>"`
+4. `npx wrangler dev` (Navigate to the project directory before running).
 
 # Testing
 ## Get testing environment setup
@@ -9,6 +12,3 @@
 * `npm install @cloudflare/vitest-pool-workers --save-dev`
 ## Run tests from working directory base
 * `npx vitest`
-
-Let me know what options you have after this. The goal is for you to be able to access the `meandering` worker. And run commands such as `npx wrangler` deploy if you were to make any changes.
-
