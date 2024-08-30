@@ -7,3 +7,4 @@ compatibility_flags = ["nodejs_compat"]
 [[r2_buckets]]
 binding = "USER_UPLOADED_CLIPS"
 bucket_name = "user-uploaded-clips"
+preview_bucket_name = "user-uploaded-clips-dev"
