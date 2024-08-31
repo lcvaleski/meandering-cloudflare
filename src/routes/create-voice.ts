@@ -10,10 +10,10 @@ export async function handleCreateVoice(request: Request, env: Env): Promise<Res
 
     if (!file) {
       return new Response(JSON.stringify({details: "No file uploaded"}), {
-		  status: 400,
-		  statusText: "No file uploaded",
-		  headers: { 'Content-Type': 'application/json'}
-		  });
+          status: 400,
+          statusText: "No file uploaded",
+          headers: { 'Content-Type': 'application/json'}
+          });
     }
 
     const r2Object = await env.USER_UPLOADED_CLIPS.put('create_voice_audio.wav', file, {
@@ -43,9 +43,9 @@ export async function handleCreateVoice(request: Request, env: Env): Promise<Res
     };
 
     return new Response(JSON.stringify({details: errorDetails}), {
-		  status: 500,
-		  statusText: error.message,
-		  headers: { 'Content-Type': 'application/json' },
-		});
+          status: 500,
+          statusText: error.message,
+          headers: { 'Content-Type': 'application/json' },
+        });
   }
 }
