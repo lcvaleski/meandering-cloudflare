@@ -22,21 +22,22 @@ describe('root request worker', () => {
 });
 
 describe('create-voice request worker', () => {
-	it('responds with 401', async () => {
+	it('no file uploaded, responds with 400', async () => {
 		const headers = new Headers({
           "Content-Type": "multipart/form-data; boundary=\"test\""
         });
 
-	    const file = new File(["content"], "test.txt", { type: "text/plain" });
+	    //const file = new File(["content"], "jud-voice.mp3");
+	    //const file = new File(["content"], "test.txt", { type: "text/plain" });
 
         // Create FormData and append the file
         const formData = new FormData();
-        formData.append("file", file);
+        //formData.append("file", file);
 
 		const request = new IncomingRequest(
 			'http://example.com/create-voice',
-      {method: "POST",
-      body: formData}
+      		{method: "POST",
+      		body: formData}
 		);
 		// Create an empty context to pass to `worker.fetch()`.
 		const ctx = createExecutionContext();
@@ -44,8 +45,8 @@ describe('create-voice request worker', () => {
 		// Wait for all `Promise`s passed to `ctx.waitUntil()` to settle before running test assertions
 		await waitOnExecutionContext(ctx);
 
-		// lacking an CARTESIA_API_KEY when running local tests, thus
-		// an 401 (unauthorized) response is expected
-		expect(await response.status).toBe(401);
+		expect(await response.status).toBe(400);
+		expect(await response.statusText).toBe("No file uploaded");
+
 	});
 });
