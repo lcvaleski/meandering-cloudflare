@@ -55,7 +55,7 @@ export async function handleGenerateSample(request: Request, env: Env): Promise<
         //
 
         const buffer = await response.arrayBuffer();
-        const r2Object = await env.USER_UPLOADED_CLIPS.put('audio.wav', buffer, {
+        const r2Object = await env.USER_UPLOADED_CLIPS.put('generated_sample_audio.wav', buffer, {
             httpMetadata: { contentType: 'audio/wav' },
         });
 

@@ -12,7 +12,7 @@ export async function handleCreateVoice(request: Request, env: Env): Promise<Res
       return new Response(JSON.stringify({ error: "No file uploaded" }));
     }
 
-    const r2Object = await env.USER_UPLOADED_CLIPS.put('audio.wav', file, {
+    const r2Object = await env.USER_UPLOADED_CLIPS.put('create_voice_audio.wav', file, {
       httpMetadata: { contentType: 'audio/wav' },
     });    
 
@@ -25,8 +25,8 @@ export async function handleCreateVoice(request: Request, env: Env): Promise<Res
       },
       body: form
     };
-    
-    let response = fetch(url, options);
+
+    let response = await fetch(url, options);
     console.log(response);
     return response;
 
