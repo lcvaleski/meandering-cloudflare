@@ -9,23 +9,27 @@ export async function handleCreateVoice(request: Request, env: Env): Promise<Res
     form.append("clip", file);
 
     if (!file) {
-      return new Response(JSON.stringify({ error: "No file uploaded" }));
+      return new Response(JSON.stringify({details: "No file uploaded"}), {
+		  status: 400,
+		  statusText: "No file uploaded",
+		  headers: { 'Content-Type': 'application/json'}
+		  });
     }
 
     const r2Object = await env.USER_UPLOADED_CLIPS.put('audio.wav', file, {
       httpMetadata: { contentType: 'audio/wav' },
-    });    
+    });
 
     const url = "https://api.cartesia.ai/voices/clone/clip";
     const options: RequestInit = {
       method: 'POST',
       headers: {
         'Cartesia-Version': '2024-06-10',
-        'X-API-Key': env.CARTESIA_API_KEY.toString(),
+        'X-API-Key': env.CARTESIA_API_KEY,
       },
       body: form
     };
-    
+
     let response = fetch(url, options);
     console.log(response);
     return response;
@@ -38,9 +42,10 @@ export async function handleCreateVoice(request: Request, env: Env): Promise<Res
       name: error.name,
     };
 
-    return new Response(JSON.stringify({ error: 'An error occurred', details: errorDetails }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify({details: errorDetails}), {
+		  status: 500,
+		  statusText: error.message,
+		  headers: { 'Content-Type': 'application/json' },
+		});
   }
 }
