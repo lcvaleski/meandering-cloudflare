@@ -41,6 +41,7 @@ export async function handleCreateVoice(request: Request, env: Env): Promise<Res
       stack: error.stack,
       name: error.name,
     };
+    console.log(errorDetails.message);
 
     return new Response(JSON.stringify({details: errorDetails}), {
           status: 500,
