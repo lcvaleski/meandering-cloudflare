@@ -15,6 +15,10 @@ import { uploadFileToR2 } from '../utils/r2Utils';
 
 export async function handleGenerateSample(request: Request, env: Env): Promise<Response> {
     try {
+        const requestBody = await request.json() as { transcript?: string; id?: string };
+        const transcript = requestBody.transcript ?? 'Placeholder';
+        const id = requestBody.id ?? 'Placeholder';
+        
         const options = {
             method: 'POST',
             headers: {
@@ -24,11 +28,11 @@ export async function handleGenerateSample(request: Request, env: Env): Promise<
             },
             body: JSON.stringify({
                 model_id: "sonic-english",
-                transcript: "Hello, world! I'm generating audio on Cartesia.",
+                transcript: transcript,
                 duration: 123,
                 voice: {
                     mode: "id",
-                    id: "a0e99841-438c-4a64-b679-ae501e7d6091",
+                    id: id,
                     __experimental_controls: {
                         speed: "normal",
                         emotion: ["positivity:high", "curiosity"]
@@ -48,19 +52,14 @@ export async function handleGenerateSample(request: Request, env: Env): Promise<
         if (!response.ok) {
             throw new Error(`Cartesia API responded with status ${response.status}`);
         }
-
-        //
-        // Here we read the chunks of the byte stream
-        // Then use uploadtoR2 utility. 
-        //
-
+        
         const buffer = await response.arrayBuffer();
         const r2Object = await env.USER_UPLOADED_CLIPS.put('generated_sample_audio.wav', buffer, {
             httpMetadata: { contentType: 'audio/wav' },
         });
 
         if (r2Object) {
-            console.log("uploaded");
+            console.log("Uploaded to R2");
         }
         console.log(r2Object);
 

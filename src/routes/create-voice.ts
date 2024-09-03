@@ -30,7 +30,6 @@ export async function handleCreateVoice(request: Request, env: Env): Promise<Res
     };
 
     let response = await fetch(url, options);
-    console.log(response);
     return response;
 
   } catch (err) {
