@@ -8,8 +8,10 @@
 5. `npx wrangler deploy` for prod deploy
 
 # Testing
+
 ## Get testing environment setup
 * `npm install vitest@1.5.0 --save-dev --save-exact`
 * `npm install @cloudflare/vitest-pool-workers --save-dev`
+
 ## Run tests from working directory base
 * `npx vitest`
