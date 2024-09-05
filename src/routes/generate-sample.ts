@@ -50,7 +50,7 @@ export async function handleGenerateSample(request: Request, env: Env): Promise<
         const response = await fetch('https://api.cartesia.ai/tts/bytes', options);
 
         if (!response.ok) {
-            throw new Error(`Cartesia API responded with status ${response.status}`);
+            console.log(`Cartesia API responded with status ${response.status}`);
         }
         
         const buffer = await response.arrayBuffer();
