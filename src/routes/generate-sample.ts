@@ -15,10 +15,9 @@ import { uploadFileToR2 } from '../utils/r2Utils';
 
 export async function handleGenerateSample(request: Request, env: Env): Promise<Response> {
     try {
-        const requestBody = await request.json() as { transcript?: string; id?: string };
+        const requestBody = await request.json() as { transcript: string; id: number[]};
         const transcript = requestBody.transcript ?? console.log("No transcript present");
         const id = requestBody.id ?? console.log("No voice id present");
-
         const options = {
             method: 'POST',
             headers: {
@@ -31,8 +30,8 @@ export async function handleGenerateSample(request: Request, env: Env): Promise<
                 transcript: transcript,
                 duration: 123,
                 voice: {
-                    mode: "id",
-                    id: id,
+                    mode: "embedding",
+                    embedding: id,
                     __experimental_controls: {
                         speed: "normal",
                         emotion: ["positivity:high", "curiosity"]
