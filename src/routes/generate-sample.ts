@@ -16,9 +16,9 @@ import { uploadFileToR2 } from '../utils/r2Utils';
 export async function handleGenerateSample(request: Request, env: Env): Promise<Response> {
     try {
         const requestBody = await request.json() as { transcript?: string; id?: string };
-        const transcript = requestBody.transcript ?? 'Placeholder';
-        const id = requestBody.id ?? 'Placeholder';
-        
+        const transcript = requestBody.transcript ?? console.log("No transcript present");
+        const id = requestBody.id ?? console.log("No voice id present");
+
         const options = {
             method: 'POST',
             headers: {
@@ -54,15 +54,14 @@ export async function handleGenerateSample(request: Request, env: Env): Promise<
         }
         
         const buffer = await response.arrayBuffer();
-        const r2Object = await env.USER_UPLOADED_CLIPS.put('generated_sample_audio.wav', buffer, {
-            httpMetadata: { contentType: 'audio/wav' },
-        });
+        const r2Object = await env.USER_UPLOADED_CLIPS.put('generated_sample_audio.wav', buffer);
 
         if (r2Object) {
-            console.log("Uploaded to R2");
+            console.log("Uploaded file to R2");
         }
-        console.log(r2Object);
-
+        else {
+            console.log("Failed to upload file to R2");
+        }
         return new Response(JSON.stringify({ 
             message: 'Audio file generated and uploaded successfully',
         }), {       
