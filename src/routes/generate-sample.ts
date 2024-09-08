@@ -1,23 +1,27 @@
 import { Env } from '../types';
-import { uploadFileToR2 } from '../utils/r2Utils';
-
-
-//
-// Currently /generate-sample only uploads the raw audio (.pcm) to R2.
-// Although I am verifying they are uploading, I don't see them on the user-uploaded-clips bucket page.
-// This is also currently not using the embedding returned by /create-voice. This should later be a paramter. 
-// I think that I will make this something like /generate-audio with another parameter for the transcript. 
-// That way I can make it more multi-purpose. 
-// When /create-voice is used, in the same stroke we can plug the returni nto this /generate-audio with a small transcript, 
-// which will be uploaded into R2.
-// Remember that this is important bedrock and shouldn't be rushed through. 
-// 
 
 export async function handleGenerateSample(request: Request, env: Env): Promise<Response> {
     try {
         const requestBody = await request.json() as { transcript: string; id: number[]};
         const transcript = requestBody.transcript ?? console.log("No transcript present");
         const id = requestBody.id ?? console.log("No voice id present");
+
+        if(!requestBody) {
+            return new Response(JSON.stringify({details: `No transcript present`}), {
+                status: 400,
+                statusText: "Bad request",
+                headers: { 'Content-Type': 'application/json'}
+                });
+        }
+
+        if(!id) {
+            return new Response(JSON.stringify({details: `No id present`}), {
+                status: 400,
+                statusText: "Bad request",
+                headers: { 'Content-Type': 'application/json'}
+                });
+        }
+
         const options = {
             method: 'POST',
             headers: {
@@ -33,8 +37,7 @@ export async function handleGenerateSample(request: Request, env: Env): Promise<
                     mode: "embedding",
                     embedding: id,
                     __experimental_controls: {
-                        speed: "normal",
-                        emotion: ["positivity:high", "curiosity"]
+                        speed: "slow",
                     }
                 },
                 output_format: {
@@ -49,7 +52,12 @@ export async function handleGenerateSample(request: Request, env: Env): Promise<
         const response = await fetch('https://api.cartesia.ai/tts/bytes', options);
 
         if (!response.ok) {
-            console.log(`Cartesia API responded with status ${response.status}`);
+            console.log(`Cartesia API responded with status ${response.status}, ${response.statusText}`);
+            return new Response(JSON.stringify({details: `Cartesia API responded with status ${response.status}, ${response.statusText}`}), {
+                status: 400,
+                statusText: "Bad reques: Cartesia error",
+                headers: { 'Content-Type': 'application/json'}
+                });
         }
         
         const buffer = await response.arrayBuffer();
@@ -60,25 +68,42 @@ export async function handleGenerateSample(request: Request, env: Env): Promise<
         }
         else {
             console.log("Failed to upload file to R2");
+            return new Response(JSON.stringify({details: "Failed to upload file to R2"}), {
+                status: 400,
+                statusText: "Bad request: Failed to upload file to R2",
+                headers: { 'Content-Type': 'application/json'}
+                });
         }
         return new Response(JSON.stringify({ 
-            message: 'Audio file generated and uploaded successfully',
+            message: '/generate-sample audio file uploaded successfully',
         }), {       
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         });
         
     } catch (err) {
-        const error = err as Error;
-        const errorDetails = {
-            message: error.message,
-            stack: error.stack,
-            name: error.name,
-        };
-
-        return new Response(JSON.stringify({ error: 'An error occurred', details: errorDetails }), {
+        if (err instanceof Error) {
+          console.error(`${err.name}: ${err.message}`);
+    
+          return new Response(JSON.stringify({
+            details: {
+              message: err.message,
+              name: err.name
+            }
+          }), {
             status: 500,
+            statusText: "Internal Server Error",
             headers: { 'Content-Type': 'application/json' },
-        });
-    }
+          });
+        } else {
+          console.error('An unknown error occurred');
+          return new Response(JSON.stringify({
+            details: 'An unknown error occurred'
+          }), {
+            status: 500,
+            statusText: "Internal Server Error",
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+      }
 }
