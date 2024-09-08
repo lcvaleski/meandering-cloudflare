@@ -32,7 +32,6 @@ export async function handleGenerateSample(request: Request, env: Env): Promise<
             body: JSON.stringify({
                 model_id: "sonic-english",
                 transcript: transcript,
-                duration: 123,
                 voice: {
                     mode: "embedding",
                     embedding: id,
