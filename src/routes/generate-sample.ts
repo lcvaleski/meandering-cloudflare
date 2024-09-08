@@ -5,6 +5,14 @@ export async function handleGenerateSample(request: Request, env: Env): Promise<
         const requestBody = await request.json() as { transcript: string; id: number[]};
         const transcript = requestBody.transcript ?? console.log("No transcript present");
         const id = requestBody.id ?? console.log("No voice id present");
+        if (transcript.length > 500){
+            console.log("Transcript character count exceeds 500 characters");
+            return new Response(JSON.stringify({details: `Transcript > 500 characters`}), {
+                status: 400,
+                statusText: "Transcript > 500 characters",
+                headers: { 'Content-Type': 'application/json'}
+                });
+        }
 
         if(!requestBody) {
             return new Response(JSON.stringify({details: `No transcript present`}), {
