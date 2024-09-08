@@ -50,7 +50,7 @@ export async function handleGenerateSample(request: Request, env: Env): Promise<
                 output_format: {
                     container: "wav",
                     encoding: "pcm_s16le",
-                    sample_rate: 8000
+                    sample_rate: 44100
                 },
                 language: "en"
             })
@@ -62,7 +62,7 @@ export async function handleGenerateSample(request: Request, env: Env): Promise<
             console.log(`Cartesia API responded with status ${response.status}, ${response.statusText}`);
             return new Response(JSON.stringify({details: `Cartesia API responded with status ${response.status}, ${response.statusText}`}), {
                 status: 400,
-                statusText: "Bad reques: Cartesia error",
+                statusText: "Bad request: Cartesia error",
                 headers: { 'Content-Type': 'application/json'}
                 });
         }
