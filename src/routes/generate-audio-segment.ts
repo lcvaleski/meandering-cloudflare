@@ -1,6 +1,6 @@
 import { Env } from '../types';
 
-export async function handleGenerateSample(request: Request, env: Env): Promise<Response> {
+export async function handleGenerateAudioSegment(request: Request, env: Env): Promise<Response> {
     try {
         const requestBody = await request.json() as { transcript: string; id: number[]};
         const transcript = requestBody.transcript ?? console.log("No transcript present");
