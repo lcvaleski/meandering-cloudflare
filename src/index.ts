@@ -1,6 +1,7 @@
 import { Env } from './types';
 import { handleCreateVoice } from './routes/create-voice';
 import { handleGenerateAudioSegment } from './routes/generate-audio-segment';
+import { handleGenerateTextSegment } from './routes/generate-text-segment';
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -15,6 +16,9 @@ export default {
         case '/generate-audio-segment':
           console.log("Handling /generate-audio-segment");
           return handleGenerateAudioSegment(request, env);
+        case '/generate-text-segment':
+          console.log("Handling /generate-text-segment");
+          return handleGenerateTextSegment(request, env);
       }
     }
 

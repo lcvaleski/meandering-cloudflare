@@ -1,0 +1,32 @@
+import { Env } from '../types';
+
+export async function handleGenerateTextSegment(request: Request, env: Env): Promise<Response> {
+    try {
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${env.OPENAI_API_KEY.toString()}`,
+            },
+            body: JSON.stringify({
+                model: "gpt-4o-mini",
+                messages: [{"role": "user", "content": "Say this is a test!"}],
+                temperature: 0.7
+            })
+        };
+        const response = await fetch('https://api.openai.com/v1/chat/completions', options);;
+        const completion = await response.json();
+        console.log(JSON.stringify(completion));
+        return new Response(JSON.stringify(completion), {
+            headers: { 'Content-Type': 'application/json' }
+        });
+    } catch (err) {
+        console.error(err);
+        const error = err as Error;
+        const body = JSON.stringify({ error: error.message || "An error occurred" });
+        return new Response(body, {
+            status: 500,
+            headers: { 'Content-Type' : 'application/json'},
+        });
+    }
+}

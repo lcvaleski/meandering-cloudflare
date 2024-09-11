@@ -4,6 +4,7 @@
 2. `wrangler login`
 3. Create a `.dev.vars` file and add:
     `CARTESIA_API_KEY="<ask logan for key>"`
+    `OPENAI_API_KEY="<ask logan for key>"`
 4. `npx wrangler dev --remote` for dev
 5. `npx wrangler deploy` for prod deploy
 
@@ -15,3 +16,4 @@
 
 ## Run tests from working directory base
 * `npx vitest`
+    
