@@ -1,13 +1,12 @@
 import { Env } from '../types';
 
-
 interface OpenAIResponse {
     choices: Array<{
       message: {
         content: string;
       };
     }>;
-  }
+}
   
 export async function handleGenerateTextSegment(request: Request, env: Env): Promise<Response> {
     try {
@@ -37,7 +36,7 @@ export async function handleGenerateTextSegment(request: Request, env: Env): Pro
         const body = JSON.stringify({ error: error.message || "An error occurred" });
         return new Response(body, {
             status: 500,
-            headers: { 'Content-Type' : 'application/json'},
+            headers: { 'Content-Type' : 'application/json' },
         });
     }
 }
