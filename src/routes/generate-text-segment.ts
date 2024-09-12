@@ -2,6 +2,8 @@ import { Env } from '../types';
 
 export async function handleGenerateTextSegment(request: Request, env: Env): Promise<Response> {
     try {
+        const requestBody = await request.json() as { prompt: string };
+        const prompt = requestBody.prompt ?? console.log("No transcript present");
         const options = {
             method: 'POST',
             headers: {
@@ -10,7 +12,7 @@ export async function handleGenerateTextSegment(request: Request, env: Env): Pro
             },
             body: JSON.stringify({
                 model: "gpt-4o-mini",
-                messages: [{"role": "user", "content": "Say this is a test!"}],
+                messages: [{"role": "user", "content": `${ prompt }`}],
                 temperature: 0.7
             })
         };
