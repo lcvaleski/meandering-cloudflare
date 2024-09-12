@@ -1,5 +1,14 @@
 import { Env } from '../types';
 
+
+interface OpenAIResponse {
+    choices: Array<{
+      message: {
+        content: string;
+      };
+    }>;
+  }
+  
 export async function handleGenerateTextSegment(request: Request, env: Env): Promise<Response> {
     try {
         const requestBody = await request.json() as { prompt: string };
@@ -17,9 +26,9 @@ export async function handleGenerateTextSegment(request: Request, env: Env): Pro
             })
         };
         const response = await fetch('https://api.openai.com/v1/chat/completions', options);;
-        const completion = await response.json();
-        console.log(JSON.stringify(completion));
-        return new Response(JSON.stringify(completion), {
+        const completion = await response.json() as OpenAIResponse;
+        const content = completion.choices[0]?.message.content;
+        return new Response(JSON.stringify(content), {
             headers: { 'Content-Type': 'application/json' }
         });
     } catch (err) {
