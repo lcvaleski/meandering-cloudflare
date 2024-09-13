@@ -11,7 +11,7 @@ interface OpenAIResponse {
 export async function handleGenerateTextSegment(request: Request, env: Env): Promise<Response> {
     try {
         const requestBody = await request.json() as { prompt: string };
-        const prompt = requestBody.prompt ?? console.log("No transcript present");
+        const prompt = requestBody.prompt ?? console.log("No prompt present");
         const options = {
             method: 'POST',
             headers: {
