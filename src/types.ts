@@ -1,5 +1,9 @@
 export interface Env {
 	USER_UPLOADED_CLIPS: R2Bucket;
+	CREATE_VOICE_ROUTE: string;
+	GENERATE_AUDIO_SEGMENT_ROUTE: string;
+	GENERATE_TEXT_SEGMENT_ROUTE: string;
+	GENERATE_STORY_ROUTE: string;
 	CARTESIA_API_KEY: string;
 	OPENAI_API_KEY: string;
 }

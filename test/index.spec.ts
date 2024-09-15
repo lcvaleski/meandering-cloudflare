@@ -26,7 +26,7 @@ describe('create-voice request worker', () => {
         const formData = new FormData();
         
         const request = new IncomingRequest(
-            'http://example.com/create-voice',
+            `http://example.com/${ env.CREATE_VOICE_ROUTE }`,
             {
                 method: "POST",
                 body: formData}
@@ -65,7 +65,7 @@ describe('create-voice request worker', () => {
     //     formData.append("file", fileBlob, "CantinaBand60.wav");
 
     //     const request = new IncomingRequest(
-    //         'http://example.com/create-voice',
+    //         'http://example.com/${ env.CREATE_VOICE_ROUTE }',
     //         {
     //             method: "POST",
     //             body: formData}

@@ -1,10 +1,14 @@
 # Setup instructions
 
 1. `npm install -g @cloudflare/wrangler`
-2. `wrangler login`
-3. Create a `.dev.vars` file and add:
-    `CARTESIA_API_KEY="<ask logan for key>"`
-    `OPENAI_API_KEY="<ask logan for key>"`
+2. `wrangler login` (you must be a part of Logan's org)
+3. Create a `.dev.vars` file and add (ask Logan for the keys):
+    `CARTESIA_API_KEY=""`
+    `OPENAI_API_KEY=""`
+    `CREATE_VOICE_ROUTE=""`
+    `GENERATE_AUDIO_SEGMENT_ROUTE=""`
+    `GENERATE_TEXT_SEGMENT_ROUTE=""`
+    `GENERATE_STORY_ROUTE=""`
 4. `npx wrangler dev --remote` for dev
 5. `npx wrangler deploy` for prod deploy
 

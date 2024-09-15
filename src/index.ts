@@ -11,17 +11,17 @@ export default {
 
     if (request.method === 'POST') {
       switch (url.pathname) {
-        case '/create-voice':
-          console.log("Handling /create-voice");
+        case `/${ env.CREATE_VOICE_ROUTE.toString() }`:
+          console.log(`Handling ${ env.CREATE_VOICE_ROUTE.toString() }`);
           return handleCreateVoice(request, env);
-        case '/generate-audio-segment':
-          console.log("Handling /generate-audio-segment");
+        case `/${ env.GENERATE_AUDIO_SEGMENT_ROUTE.toString() }`:
+          console.log(`Handling ${ env.GENERATE_AUDIO_SEGMENT_ROUTE.toString() }`);
           return handleGenerateAudioSegment(request, env);
-        case '/generate-text-segment':
-          console.log("Handling /generate-text-segment");
+        case `/${ env.GENERATE_TEXT_SEGMENT_ROUTE.toString() }`:
+          console.log(`Handling ${ env.GENERATE_TEXT_SEGMENT_ROUTE.toString() }`);
           return handleGenerateTextSegment(request, env);
-        case '/generate-story':
-          console.log("Handling /generate-story");
+        case `/${ env.GENERATE_STORY_ROUTE.toString() }`:
+          console.log(`Handling ${ env.GENERATE_STORY_ROUTE.toString() }`);
           return handleGenerateStory(request, env);
       }
     }
