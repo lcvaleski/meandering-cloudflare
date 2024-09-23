@@ -14,12 +14,15 @@ export default {
         case `/${ env.CREATE_VOICE_ROUTE.toString() }`:
           console.log(`Handling ${ env.CREATE_VOICE_ROUTE.toString() }`);
           return handleCreateVoice(request, env);
+
         case `/${ env.GENERATE_AUDIO_SEGMENT_ROUTE.toString() }`:
           console.log(`Handling ${ env.GENERATE_AUDIO_SEGMENT_ROUTE.toString() }`);
           return handleGenerateAudioSegment(request, env);
+
         case `/${ env.GENERATE_TEXT_SEGMENT_ROUTE.toString() }`:
           console.log(`Handling ${ env.GENERATE_TEXT_SEGMENT_ROUTE.toString() }`);
           return handleGenerateTextSegment(request, env);
+
         case `/${ env.GENERATE_STORY_ROUTE.toString() }`:
           console.log(`Handling ${ env.GENERATE_STORY_ROUTE.toString() }`);
           return handleGenerateStory(request, env);
