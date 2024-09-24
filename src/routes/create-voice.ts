@@ -37,6 +37,8 @@ export async function handleCreateVoice(request: Request, env: Env): Promise<Res
     // The response is a list of doubles (embedding).
     
     let response = await fetch(url, options);
+    const buffer = response.arrayBuffer;
+
     return response;
     
   } catch (err) {
