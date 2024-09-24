@@ -25,6 +25,10 @@ export async function handleGenerateStory(request: Request, env: Env): Promise<R
         let i = 0;
         let masterBuffer = new Uint8Array();
 
+
+        const sampleRate = 44100;
+        const silenceDuration = 0.5;
+        const silentBuffer = createSilentBuffer(sampleRate, silenceDuration);
         while (i < segments) {
             const textOptions = { 
                 method: 'POST',
@@ -40,9 +44,10 @@ export async function handleGenerateStory(request: Request, env: Env): Promise<R
             const audioResponse = await fetch(audioUri, audioOptions);
             const newBuffer = await audioResponse.arrayBuffer();
 
-            const combinedBuffer = new Uint8Array(masterBuffer.length + newBuffer.byteLength);
+            const combinedBuffer = new Uint8Array(masterBuffer.length + newBuffer.byteLength + silentBuffer.byteLength);
             combinedBuffer.set(masterBuffer, 0);
             combinedBuffer.set(new Uint8Array(newBuffer), masterBuffer.length);
+            combinedBuffer.set(new Uint8Array(silentBuffer.buffer), masterBuffer.length + newBuffer.byteLength);
             masterBuffer = combinedBuffer;
             i += 1;
         };
@@ -53,7 +58,7 @@ export async function handleGenerateStory(request: Request, env: Env): Promise<R
             console.log("Uploaded to R2")
         }
         else {
-            console.log("Not-uploaded to R2");  
+            console.log("Not-uploaded to R2");
         }
         return new Response(wavBuffer, {
             headers: {
@@ -70,6 +75,11 @@ export async function handleGenerateStory(request: Request, env: Env): Promise<R
             headers: { 'Content-Type' : 'application/json'},
         })
     }
+}
+
+function createSilentBuffer(sampleRate: number, durationInSeconds: number) {
+    const numberOfSamples = sampleRate * durationInSeconds;
+    return new Float32Array(numberOfSamples);
 }
 
 function convertToWav(audioBuffer: Uint8Array): ArrayBuffer {
