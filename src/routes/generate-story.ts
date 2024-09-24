@@ -48,13 +48,12 @@ export async function handleGenerateStory(request: Request, env: Env): Promise<R
         };
 
         const wavBuffer = convertToWav(masterBuffer);
-        console.log(wavBuffer);
         const upload = await env.USER_UPLOADED_CLIPS.put('NEW.wav', wavBuffer);
         if (upload) {
-            console.log("uploaded")
+            console.log("Uploaded to R2")
         }
         else {
-            console.log("Not uploaded");
+            console.log("Not-uploaded to R2");  
         }
         return new Response(wavBuffer, {
             headers: {

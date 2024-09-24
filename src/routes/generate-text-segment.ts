@@ -28,7 +28,7 @@ export async function handleGenerateTextSegment(request: Request, env: Env): Pro
         const completion = await response.json() as OpenAIResponse;
         const content = completion.choices[0]?.message.content;
         return new Response(JSON.stringify(content), {
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' } 
         });
     } catch (err) {
         console.error(err);
