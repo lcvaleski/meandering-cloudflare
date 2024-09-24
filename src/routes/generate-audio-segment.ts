@@ -48,7 +48,7 @@ export async function handleGenerateAudioSegment(request: Request, env: Env): Pr
                 status: 200,
             });
         }
-        else if (typeof id === "object") {
+        else if (Array.isArray(id)) {
             const options = {
                 method: 'POST',
                 headers: {

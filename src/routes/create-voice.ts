@@ -1,4 +1,9 @@
 import { Env } from '../types';
+import { convertToWav } from '../utils/convert-to-wav';
+
+interface EmbeddingResponse {
+  embedding: number[];
+}
 
 export async function handleCreateVoice(request: Request, env: Env): Promise<Response> {
   try {
@@ -37,10 +42,32 @@ export async function handleCreateVoice(request: Request, env: Env): Promise<Res
     // The response is a list of doubles (embedding).
     
     let response = await fetch(url, options);
-    const buffer = response.arrayBuffer;
+    const responseData = await response.json() as EmbeddingResponse;
+    const embedding = responseData.embedding;
+    console.log('Embedding:', embedding);
+    console.log('Embedding type', typeof embedding);
+    const sampleUrl = `http://localhost:8787/${ env.GENERATE_AUDIO_SEGMENT_ROUTE }`;
+    const sampleOptions = {
+      method: 'POST',
+      body: JSON.stringify({ transcript : "This is a sample of my voice", id : embedding })
+    }
+    const sampleResponse = await fetch(sampleUrl, sampleOptions);
+    const sampleBuffer = await sampleResponse.arrayBuffer();
+    const buffer = new Uint8Array(sampleBuffer);
+    const wavBuffer = convertToWav(buffer);
+    const r2Upload = await env.USER_UPLOADED_CLIPS.put('clone.wav', wavBuffer);
+    if (r2Upload) {
+      console.log("Cloned voice sample uploaded");
+    }
+    else {
+      console.log("Cloned voice sample not uploaded");
+    }
 
-    return response;
-    
+    return new Response(JSON.stringify({ message: "Voice cloned successfully", embedding }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });    
+
   } catch (err) {
     if (err instanceof Error) {
       console.error(`${err.name}: ${err.message}`);
