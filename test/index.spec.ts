@@ -1,41 +1,37 @@
-// test/index.spec.ts
 import { env, createExecutionContext, waitOnExecutionContext, SELF } from 'cloudflare:test';
 import { describe, it, expect } from 'vitest';
 import worker from '../src/index';
 
 
-// For now, you'll need to do something like this to get a correctly-typed
-// `Request` to pass to `worker.fetch()`.
 const IncomingRequest = Request<unknown, IncomingRequestCfProperties>;
 
-describe('root request worker', () => {
-    it('responds with Not Found', async () => {
+describe('Root', () => {
+    it('Responds with 404 Not Found', async () => {
         const request = new IncomingRequest('http://example.com/');
-        // Create an empty context to pass to `worker.fetch()`∏
+
         const ctx = createExecutionContext();
         const response = await worker.fetch(request, env, ctx);
-        // Wait for all `Promise`s passed to `ctx.waitUntil()` to settle before running test assertions
         await waitOnExecutionContext(ctx);
+
         expect(await response.status).toBe(404);
         expect(await response.text()).toBe("Not Found");
     });
 });
 
-describe('create-voice request worker', () => {
-    it('no file uploaded, responds with 400', async () => {
+describe('Create voice', () => {
+    it('No file uploaded, responds with 400', async () => {
         const formData = new FormData();
         
         const request = new IncomingRequest(
             `http://example.com/${ env.CREATE_VOICE_ROUTE }`,
             {
                 method: "POST",
-                body: formData}
-            );
+                body: formData
+            }
+        );
 
-        // Create an empty context to pass to `worker.fetch()`.
         const ctx = createExecutionContext();
         const response = await worker.fetch(request, env, ctx);
-        // Wait for all `Promise`s passed to `ctx.waitUntil()` to settle before running test assertions
         await waitOnExecutionContext(ctx);
 
         expect(await response.status).toBe(400);
@@ -43,41 +39,43 @@ describe('create-voice request worker', () => {
 
     });
 
-    //
-    // ***** Work in progress test
-    // ***** How do we mock a file? Having difficulty with this.
-    //
-
     // it('file uploaded, responds with 200', async () => {
     //     const formData = new FormData();
     //     const ctx = createExecutionContext();
-
+    
     //     const getFileRequest = new IncomingRequest(
-    //         'https://www2.cs.uic.edu/~i101/SoundFiles/CantinaBand60.wav',
+    //         'https://www2.cs.uic.edu/~i101/SoundFiles/taunt.wav',
     //         {
     //             method: "GET",
     //         }
-    //     )
-        
+    //     );
+    
+    //     await env.TESTS
+
     //     const fileResponse = await worker.fetch(getFileRequest, env, ctx);
-    //     const buffer = await fileResponse.arrayBuffer(); 
+    //     const buffer = await fileResponse.arrayBuffer();
+    //     console.log(`File size fetched: ${buffer.byteLength} bytes`);
     //     const fileBlob = new Blob([buffer], { type: 'audio/wav' });
     //     formData.append("file", fileBlob, "CantinaBand60.wav");
-
+    
     //     const request = new IncomingRequest(
-    //         'http://example.com/${ env.CREATE_VOICE_ROUTE }',
+    //         `http://example.com/${env.CREATE_VOICE_ROUTE}`,
     //         {
     //             method: "POST",
-    //             body: formData}
-    //         );
-
-    //     // Create an empty context to pass to `worker.fetch()`.
+    //             body: formData
+    //         }
+    //     );
+    
     //     const response = await worker.fetch(request, env, ctx);
-    //     // Wait for all `Promise`s passed to `ctx.waitUntil()` to settle before running test assertions
     //     await waitOnExecutionContext(ctx);
-
-    //     expect(await response.status).toBe(200);
-
+    
+    //     // Debugging logs
+    //     console.log(`Response Status: ${response.status}`);
+    //     if (response.status !== 200) {
+    //         console.log(`Response Text: ${await response.text()}`);
+    //     }
+    
+    //     expect(response.status).toBe(200);
     // });
 
 });
