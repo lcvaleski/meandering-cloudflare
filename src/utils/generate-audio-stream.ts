@@ -17,11 +17,8 @@ export async function* generateAudioStream(env: Env, segments: number, voice: st
             throw new Error(`Failed to generate audio segment ${i}`);
         }
 
-        // Yield the audio data as Uint8Array
-        const reader = audioResponse.body!.getReader();
-        let result: ReadableStreamReadResult<Uint8Array>;
-        while (!(result = await reader.read()).done) {
-            yield result.value;
-        }
+        const audioBuffer = await audioResponse.arrayBuffer();
+
+        yield new Uint8Array(audioBuffer);
     }
 }

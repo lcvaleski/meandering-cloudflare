@@ -18,11 +18,25 @@ export async function handleGenerateStory(request: Request, env: Env): Promise<R
 
         const audioGenerator = generateAudioStream(env, segments, voice, textUri, audioUri);
 
-        const audioStream = streamFromAsyncGenerator(audioGenerator);
+        // Collect all audio segments into a single buffer
+        let audioBuffers: Uint8Array[] = [];
+        for await (const audioChunk of audioGenerator) {
+            audioBuffers.push(audioChunk);
+        }
+
+        // Combine the buffers into a single Uint8Array
+        const totalLength = audioBuffers.reduce((acc, buffer) => acc + buffer.length, 0);
+        const combinedAudio = new Uint8Array(totalLength);
+        let offset = 0;
+        for (const buffer of audioBuffers) {
+            combinedAudio.set(buffer, offset);
+            offset += buffer.length;
+        }
 
         const r2ObjectKey = `stories/${story_type}-${Date.now()}.mp3`;
 
-        await env.USER_UPLOADED_CLIPS.put(r2ObjectKey, audioStream);
+        // Upload the combined audio buffer to R2
+        await env.USER_UPLOADED_CLIPS.put(r2ObjectKey, combinedAudio);
 
         return new Response(JSON.stringify({ message: `Audio story stored at ${r2ObjectKey}` }), {
             status: 200,
@@ -30,8 +44,9 @@ export async function handleGenerateStory(request: Request, env: Env): Promise<R
         });
 
     } catch (err) {
+        const error = err as Error;
         console.error(err as Error);
-        return new Response(JSON.stringify({ error: err || "An error occurred" }), {
+        return new Response(JSON.stringify({ error: error.message || "An error occurred" }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
         });
