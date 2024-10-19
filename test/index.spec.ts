@@ -18,6 +18,18 @@ describe('Root', () => {
     });
 });
 
+describe('Text segment generation', () => {
+    it('Responds with 200', async () => {
+        const request = new IncomingRequest(`http://example.com/${ env.GENERATE_TEXT_SEGMENT_ROUTE }`, {
+            method: 'POST',
+            body: JSON.stringify({ prompt: 'Say something' }),
+        });
+        const ctx = createExecutionContext();
+        const response = await worker.fetch(request, env, ctx);
+        expect(await response.status).toBe(200);
+    });
+});
+
 describe('Create voice', () => {
     it('No file uploaded, responds with 400', async () => {
         const formData = new FormData();
