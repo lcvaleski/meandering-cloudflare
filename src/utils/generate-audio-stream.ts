@@ -6,6 +6,7 @@ export async function* generateAudioStream(env: Env, segments: number, voice: st
             body: JSON.stringify({ prompt: 'Talk a bit about dogs. Two sentences, max.' }),
         });
         const content = await textResponse.text();
+        console.log(content);
 
         // Generate audio segment
         const audioResponse = await fetch(audioUri, {
@@ -14,7 +15,7 @@ export async function* generateAudioStream(env: Env, segments: number, voice: st
         });
 
         if (!audioResponse.ok) {
-            throw new Error(`Failed to generate audio segment ${i}`);
+            throw new Error(`Failed to generate audio segment ${i}: ${audioResponse.statusText}`);
         }
 
         const audioBuffer = await audioResponse.arrayBuffer();

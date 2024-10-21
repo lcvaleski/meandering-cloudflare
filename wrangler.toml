@@ -8,8 +8,3 @@ compatibility_flags = ["nodejs_compat"]
 binding = "USER_UPLOADED_CLIPS"
 bucket_name = "user-uploaded-clips"
 preview_bucket_name = "user-uploaded-clips-dev"
-
-[[r2_buckets]]
-binding = "TESTS"
-bucket_name = "meandering-tests"
-preview_bucket_name = "meandering-tests-dev"

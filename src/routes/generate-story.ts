@@ -10,21 +10,24 @@ export async function handleGenerateStory(request: Request, env: Env): Promise<R
         const { story_type, segments, voice } = requestBody;
 
         if (!story_type || !segments || !voice) {
-            throw new Error("Missing required parameters");
+            console.error("Missing required parameters: story_type, segments, or voice");
+            return new Response(JSON.stringify({ error: "Missing required parameters: story_type, segments, or voice" }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
         }
 
-        const textUri = `http://localhost:8787/${env.GENERATE_TEXT_SEGMENT_ROUTE}`;
-        const audioUri = `http://localhost:8787/${env.GENERATE_AUDIO_SEGMENT_ROUTE}`;
+        const textUri = new URL(env.GENERATE_TEXT_SEGMENT_ROUTE, request.url).toString();
+        const audioUri = new URL(env.GENERATE_AUDIO_SEGMENT_ROUTE, request.url).toString();
 
         const audioGenerator = generateAudioStream(env, segments, voice, textUri, audioUri);
 
-        // Collect all audio segments into a single buffer
         let audioBuffers: Uint8Array[] = [];
         for await (const audioChunk of audioGenerator) {
+            console.log("Received audio chunk of size:", audioChunk.length);
             audioBuffers.push(audioChunk);
         }
 
-        // Combine the buffers into a single Uint8Array
         const totalLength = audioBuffers.reduce((acc, buffer) => acc + buffer.length, 0);
         const combinedAudio = new Uint8Array(totalLength);
         let offset = 0;
@@ -33,19 +36,22 @@ export async function handleGenerateStory(request: Request, env: Env): Promise<R
             offset += buffer.length;
         }
 
-        const r2ObjectKey = `stories/${story_type}-${Date.now()}.mp3`;
+        console.log("Total combined audio size:", totalLength);
 
-        // Upload the combined audio buffer to R2
+        const r2ObjectKey = `stories/${story_type}-${Date.now()}.mp3`;
+        console.log("Uploading combined audio to R2 at key:", r2ObjectKey);
+
         await env.USER_UPLOADED_CLIPS.put(r2ObjectKey, combinedAudio);
 
+        console.log(`Audio story successfully stored at ${r2ObjectKey}`);
         return new Response(JSON.stringify({ message: `Audio story stored at ${r2ObjectKey}` }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
         });
 
     } catch (err) {
+        console.error("Error generating audio story:", err);
         const error = err as Error;
-        console.error(err as Error);
         return new Response(JSON.stringify({ error: error.message || "An error occurred" }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },

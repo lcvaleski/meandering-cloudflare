@@ -23,6 +23,14 @@
 
 # Manual testing
 
+```curl -X POST https://meandering.loganvaleski.workers.dev/3rRwebcr-generate-story \
+  -H "Content-Type: application/json" \
+  -d '{
+    "story_type": "boring",
+    "segments": 5,
+    "voice": "a0e99841-438c-4a64-b679-ae501e7d6091"
+  }'```
+
 ```curl -X POST http://localhost:8787/3rRwebcr-generate-story \
   -H "Content-Type: application/json" \
   -d '{
