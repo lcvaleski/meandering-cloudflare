@@ -15,7 +15,7 @@ export async function* generateAudioStream(env: Env, segments: number, voice: st
         });
 
         if (!audioResponse.ok) {
-            throw new Error(`Failed to generate audio segment ${i}: ${audioResponse.statusText}`);
+            throw new Error(`Failed to generate audio segment ${i}: ${audioResponse.status}, ${audioResponse.statusText}`);
         }
 
         const audioBuffer = await audioResponse.arrayBuffer();

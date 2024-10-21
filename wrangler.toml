@@ -4,6 +4,10 @@ main = "src/index.ts"
 compatibility_date = "2024-08-15"
 compatibility_flags = ["nodejs_compat"]
 
+routes = [
+  { pattern = "backend.meanderingsleep.com", custom_domain = true }
+]
+
 [[r2_buckets]]
 binding = "USER_UPLOADED_CLIPS"
 bucket_name = "user-uploaded-clips"
