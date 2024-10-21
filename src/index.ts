@@ -3,6 +3,7 @@ import { handleCreateVoice } from './routes/create-voice';
 import { handleGenerateAudioSegment } from './routes/generate-audio-segment';
 import { handleGenerateTextSegment } from './routes/generate-text-segment';
 import { handleGenerateStory } from './routes/generate-story';
+import { handleSitchSegments } from './utils/stitch-segments';
 
 // Helper function to add CORS headers
 function addCorsHeaders(response: Response): Response {
@@ -51,4 +52,4 @@ export default {
 
     return addCorsHeaders(new Response('Not Found', { status: 404 }));
   }
-};
+;

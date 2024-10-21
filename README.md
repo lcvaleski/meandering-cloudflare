@@ -23,7 +23,7 @@
 
 # Manual testing
 
-```curl -X POST https://meandering.loganvaleski.workers.dev/3rRwebcr-generate-story \
+```curl -X POST https://backend.meanderingsleep.com/3rRwebcr-generate-story \
   -H "Content-Type: application/json" \
   -d '{
     "story_type": "boring",
@@ -38,4 +38,11 @@
     "segments": 5,
     "voice": "a0e99841-438c-4a64-b679-ae501e7d6091"
   }'```
+
+curl -X POST https://backend.meanderingsleep.com/j!84wM77T-generate-text-segment \
+  -H "Content-Type: application/json" \
+  -d '{
+        "prompt": "Once upon a time in a distant galaxy...",
+      }'
+
     
