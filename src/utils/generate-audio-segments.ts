@@ -1,4 +1,4 @@
-export async function* generateAudioStream(env: Env, segments: number, voice: string, textUri: string, audioUri: string): AsyncGenerator<Uint8Array> {
+export async function* generateAudioSegments(env: Env, segments: number, voice: string, textUri: string, audioUri: string): AsyncGenerator<Uint8Array> {
     for (let i = 0; i < segments; i++) {
         // Generate text segment
         const textResponse = await fetch(textUri, {

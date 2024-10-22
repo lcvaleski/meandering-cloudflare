@@ -52,4 +52,4 @@ export default {
 
     return addCorsHeaders(new Response('Not Found', { status: 404 }));
   }
-;
+}

@@ -1,8 +1,7 @@
 import { Env } from '../types';
-import { convertToWav } from '../utils/convert-to-wav';
 import { createSilentBuffer } from '../utils/create-silent-buffer';
-import { generateAudioStream } from '../utils/generate-audio-stream';
-import { streamFromAsyncGenerator } from '../utils/stream-from-async-generator';
+import { generateAudioSegments } from '../utils/generate-audio-segments';
+import { handleSitchSegments } from '../utils/stitch-segments';
 
 export async function handleGenerateStory(request: Request, env: Env): Promise<Response> {
     try {
@@ -17,34 +16,22 @@ export async function handleGenerateStory(request: Request, env: Env): Promise<R
             });
         }
 
+        // Keep these outside of the generateAudioSegments function because request.url depends on prod/dev
         const textUri = new URL(env.GENERATE_TEXT_SEGMENT_ROUTE, request.url).toString();
         const audioUri = new URL(env.GENERATE_AUDIO_SEGMENT_ROUTE, request.url).toString();
 
-        const audioGenerator = generateAudioStream(env, segments, voice, textUri, audioUri);
+        const audioGenerator = generateAudioSegments(env, segments, voice, textUri, audioUri);
 
-        let audioBuffers: Uint8Array[] = [];
+        let i = 1;
         for await (const audioChunk of audioGenerator) {
-            console.log("Received audio chunk of size:", audioChunk.length);
-            audioBuffers.push(audioChunk);
+            const r2ObjectKey = `stories/${story_type}-${new Date().toLocaleDateString('en-US', {weekday: 'long'}).toLowerCase()}-${i}.mp3`;
+            await env.USER_UPLOADED_CLIPS.put(r2ObjectKey, audioChunk);
+            i++;
         }
+        const finalizeStory = await handleSitchSegments();
+        console.log(finalizeStory.statusText);
 
-        const totalLength = audioBuffers.reduce((acc, buffer) => acc + buffer.length, 0);
-        const combinedAudio = new Uint8Array(totalLength);
-        let offset = 0;
-        for (const buffer of audioBuffers) {
-            combinedAudio.set(buffer, offset);
-            offset += buffer.length;
-        }
-
-        console.log("Total combined audio size:", totalLength);
-
-        const r2ObjectKey = `stories/${story_type}-${Date.now()}.mp3`;
-        console.log("Uploading combined audio to R2 at key:", r2ObjectKey);
-
-        await env.USER_UPLOADED_CLIPS.put(r2ObjectKey, combinedAudio);
-
-        console.log(`Audio story successfully stored at ${r2ObjectKey}`);
-        return new Response(JSON.stringify({ message: `Audio story stored at ${r2ObjectKey}` }), {
+        return new Response(JSON.stringify({ message: `Audio story success` }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
         });
